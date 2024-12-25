@@ -80,14 +80,12 @@ app.post("/api/users/:id/favorites", async (req, res, next) => {
     if (loggedInUser.id !== req.params.id) {
       throw Error("Unauthorized access");
     }
-    res
-      .status(201)
-      .send(
-        await createFavorite({
-          user_id: req.params.id,
-          product_id: req.body.product_id,
-        })
-      );
+    res.status(201).send(
+      await createFavorite({
+        user_id: req.params.id,
+        product_id: req.body.product_id,
+      })
+    );
   } catch (ex) {
     next(ex);
   }
@@ -132,25 +130,27 @@ const init = async () => {
   await createTables();
   console.log("Tables created");
 
-  const [moe, lucy, ethyl, curly, foo, bar, bazz, quq, fip] = await Promise.all([
-    createUser({ username: 'moe', password: 'm_pw'}),
-    createUser({ username: 'lucy', password: 'l_pw'}),
-    createUser({ username: 'ethyl', password: 'e_pw'}),
-    createUser({ username: 'curly', password: 'c_pw'}),
-    createProduct({ name: 'foo' }),
-    createProduct({ name: 'bar' }),
-    createProduct({ name: 'bazz' }),
-    createProduct({ name: 'quq' }),
-    createProduct({ name: 'fip' })
-  ]);
+  const [moe, lucy, ethyl, curly, foo, bar, bazz, quq, fip] = await Promise.all(
+    [
+      createUser({ username: "moe", password: "m_pw" }),
+      createUser({ username: "lucy", password: "l_pw" }),
+      createUser({ username: "ethyl", password: "e_pw" }),
+      createUser({ username: "curly", password: "c_pw" }),
+      createProduct({ name: "foo" }),
+      createProduct({ name: "bar" }),
+      createProduct({ name: "bazz" }),
+      createProduct({ name: "quq" }),
+      createProduct({ name: "fip" }),
+    ]
+  );
 
   console.log(await fetchUsers());
   console.log(await fetchProducts());
 
   console.log(await fetchFavorites(moe.id));
-  const favorite = await createFavorite({ user_id: moe.id, product_id: foo.id 
+  await createFavorite({ user_id: moe.id, product_id: foo.id });
 
-  app.listen(port, () => console.log(`listening on port ${port}`));
-}};
+  app.listen(port, () => console.log(`Server running on port ${port}`));
+};
 
 init();
